@@ -3,7 +3,7 @@ Console.WriteLine("Enter 1 to create data file.");
 Console.WriteLine("Enter 2 to parse data.");
 Console.WriteLine("Enter anything else to quit.");
 // input response
-string? resp = Console.ReadLine();
+string resp = Console.ReadLine();
 
 if (resp == "1")
 {
@@ -35,7 +35,7 @@ if (resp == "1")
             hours[i] = rnd.Next(4, 13);
         }
         // M/d/yyyy,#|#|#|#|#|#|#
-        // Console.WriteLine($"{dataDate:M/d/yy},{string.Join("|", hours)}");
+        Console.WriteLine($"{dataDate:M/d/yy},{string.Join("|", hours)}");
         sw.WriteLine($"{dataDate:M/d/yyyy},{string.Join("|", hours)}");
         // add 1 week to date
         dataDate = dataDate.AddDays(7);
@@ -45,5 +45,27 @@ if (resp == "1")
 else if (resp == "2")
 {
     // TODO: parse data file
+    var lines =File.ReadAllLines("data.txt");
+    foreach (var line in lines)
+    {
+        var parts = line.Split(',');
+        var date = DateTime.Parse(parts[0]);
+        var sleepDays = parts[1].Split('|');
+
+        Console.WriteLine($"Week of {date.ToString("MMM, dd, yyyy")}");
+        Console.WriteLine("Su Mo Tu We Th Fr Sa Tot Avg");
+        Console.WriteLine("-- -- -- -- -- -- -- --- ---");
+
+        int total = 0;
+        string sleepPattern = "";
+
+        foreach (var sleep in sleepDays) {
+            var hours = Int32.Parse(sleep);
+            total += hours;
+            sleepPattern += $"{hours,2} ";
+        }
+        float avg = total / (float)sleepDays.Length;
+        Console.WriteLine($"{sleepPattern}{total,3} {avg:F1}\n");
+    }
 
 }
